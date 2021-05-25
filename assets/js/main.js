@@ -23,13 +23,38 @@
         return li;
     };
 
+    const salvarTarefas = () => {
+        const liTarefas = tarefas.querySelectorAll('li');
+        const listaDeTarefas = [];
+
+        for (let tarefa of liTarefas) {
+            let tarefaTexto = tarefa.innerText;
+            tarefaTexto = tarefaTexto.replace('Apagar', '').trim();
+            listaDeTarefas.push(tarefaTexto);
+        }
+
+        const tarefasJSON = JSON.stringify(listaDeTarefas);
+        localStorage.setItem('tarefas', tarefasJSON);
+    };
+
     const criaTarefa = textoInput => {
         const li = criaLi();
         li.innerText = textoInput + ' ';
         tarefas.appendChild(li);
         limparInput();
         criaBotaoApagar(li);
+        salvarTarefas();
     };
+
+    const adicionaTarefasSalvas = () => {
+        const tarefas = localStorage.getItem('tarefas');
+        const listaDeTarefas = JSON.parse(tarefas);
+
+        for (let tarefa of listaDeTarefas) {
+            criaTarefa(tarefa);
+        }
+    };
+    adicionaTarefasSalvas();
 
     btnTarefa.addEventListener('click', e => {
         e.preventDefault();
@@ -41,6 +66,7 @@
         const el = e.target;
         if (el.classList.contains('apagar')) {
             el.parentElement.remove();
+            salvarTarefas();
         }
     });
 })();
